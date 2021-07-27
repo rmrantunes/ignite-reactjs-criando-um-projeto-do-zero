@@ -1,0 +1,40 @@
+.wrapper {
+  padding: 1rem;
+  display: block;
+  transition: filter 0.2s;
+
+  &:hover {
+    filter: brightness(0.8);
+  }
+
+  h2 {
+    font-size: 1.75rem;
+    line-height: 2.125rem;
+    color: var(--heading);
+
+    margin-bottom: 0.8rem;
+  }
+
+  p {
+    font-size: 1.125rem;
+    color: var(--body);
+    margin-bottom: 1.5rem;
+  }
+
+  .footer {
+    display: flex;
+    gap: 1.5rem;
+
+    div {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      font-size: 0.875rem;
+      color: var(--info);
+
+      svg {
+        width: 1.125rem;
+      }
+    }
+  }
+}
