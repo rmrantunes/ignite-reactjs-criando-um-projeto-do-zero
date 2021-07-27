@@ -1,1 +1,10 @@
-// TODO
+.wrapper {
+  padding: 2.5rem 0;
+  background-color: var(--background);
+  position: sticky;
+  top: 0;
+
+  &.hasMarginTop {
+    margin-top: 2.5rem;
+  }
+}
