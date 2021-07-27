@@ -2,6 +2,21 @@
   box-sizing: border-box;
   margin: 0;
   padding: 0;
+
+  text-decoration: none;
+  list-style: none;
 }
 
 // TODO
+:root {
+  --highlight: #FF57B2;
+  --heading: #F8F8F8;
+  --background: #1A1D23;
+  --info: #BBBBBB;
+  --body: #D7D7D7;
+}
+
+body {
+  background-color: var(--background);
+  font-family: Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+}
