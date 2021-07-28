@@ -1,14 +1,15 @@
 import Link from 'next/link';
-import { useRouter } from 'next/router';
 
 import commonStyles from '../../styles/common.module.scss';
 import styles from './Header.module.scss';
 
-export default function Header(): JSX.Element {
-  const router = useRouter();
+interface HeaderProps {
+  isCurrentPageIndex?: boolean;
+}
 
-  const isCurrentPageIndex = router.asPath === '/';
-
+export default function Header({
+  isCurrentPageIndex,
+}: HeaderProps): JSX.Element {
   return (
     <header
       className={`${styles.wrapper} ${
