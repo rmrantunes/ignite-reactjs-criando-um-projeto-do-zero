@@ -239,7 +239,7 @@ describe('Post', () => {
     screen.getByText('Como utilizar Hooks');
     screen.getByText('25 mar 2021');
     screen.getByText('Joseph Oliveira');
-    screen.getByText('~ 4 min');
+    screen.getByText('4 min');
 
     screen.getByText('Proin et varius');
     screen.getByText(/Nullam dolor sapien/);

@@ -59,7 +59,7 @@ function getAproxReadingDuration(
   const aproxReadingDurationInMinutes = wordsAmount / wordsPerMinute;
   return aproxReadingDurationInMinutes < 1
     ? '< 1 min'
-    : `~ ${Math.ceil(aproxReadingDurationInMinutes)} min`;
+    : `${Math.ceil(aproxReadingDurationInMinutes)} min`;
 }
 
 export default function Post({ post }: PostPageProps): JSX.Element {
