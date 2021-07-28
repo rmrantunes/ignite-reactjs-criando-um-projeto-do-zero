@@ -7,7 +7,7 @@ export type PostLinkProps = {
   subtitle: string;
   publishedAt: string;
   author: string;
-  slug: string;
+  uid: string;
 };
 
 export function PostLink({
@@ -15,10 +15,10 @@ export function PostLink({
   subtitle,
   publishedAt,
   author,
-  slug,
+  uid,
 }: PostLinkProps): JSX.Element {
   return (
-    <Link href={`/post/${slug}`}>
+    <Link href={`/post/${uid}`}>
       <a className={styles.wrapper}>
         <h2>{title}</h2>
         <p>{subtitle}</p>
