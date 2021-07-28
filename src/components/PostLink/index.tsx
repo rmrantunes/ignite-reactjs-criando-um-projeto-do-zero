@@ -1,3 +1,4 @@
+import Link from 'next/link';
 import { FiCalendar, FiUser } from 'react-icons/fi';
 import styles from './PostLink.module.scss';
 
@@ -17,19 +18,21 @@ export function PostLink({
   slug,
 }: PostLinkProps): JSX.Element {
   return (
-    <a href={`/post/${slug}`} className={styles.wrapper}>
-      <h2>{title}</h2>
-      <p>{subtitle}</p>
-      <div className={styles.footer}>
-        <div>
-          <FiCalendar />
-          <span>{publishedAt}</span>
+    <Link href={`/post/${slug}`}>
+      <a className={styles.wrapper}>
+        <h2>{title}</h2>
+        <p>{subtitle}</p>
+        <div className={styles.footer}>
+          <div>
+            <FiCalendar />
+            <span>{publishedAt}</span>
+          </div>
+          <div>
+            <FiUser />
+            <span>{author}</span>
+          </div>
         </div>
-        <div>
-          <FiUser />
-          <span>{author}</span>
-        </div>
-      </div>
-    </a>
+      </a>
+    </Link>
   );
 }
