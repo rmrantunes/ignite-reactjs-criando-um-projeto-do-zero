@@ -1,6 +1,8 @@
 import { GetStaticPaths, GetStaticProps } from 'next';
 import { RichText } from 'prismic-dom';
 import { FiCalendar, FiUser, FiClock } from 'react-icons/fi';
+import Prismic from '@prismicio/client';
+import { useRouter } from 'next/router';
 
 import { Label } from '../../components/Label';
 import { PostBanner } from '../../components/PostBanner';
@@ -9,22 +11,23 @@ import { getPrismicClient } from '../../services/prismic';
 
 import commonStyles from '../../styles/common.module.scss';
 import styles from './post.module.scss';
+import { formatDate } from '../../utils/format';
 
 interface Post {
   first_publication_date: string | null;
-  reading_duration: string;
+  uid?: string;
   data: {
     title: string;
     banner: {
       url: string;
-      alt: string;
+      alt?: string;
     };
     author: string;
     content: {
       heading: string;
       body: {
         text: string;
-      };
+      }[];
     }[];
   };
 }
@@ -33,36 +36,7 @@ interface PostPageProps {
   post: Post;
 }
 
-export default function Post({ post }: PostPageProps): JSX.Element {
-  return (
-    <main>
-      <PostBanner alt={post.data.banner.alt} imageUrl={post.data.banner.url} />
-      <article className={`${commonStyles.container} ${styles.postWrapper}`}>
-        <div>
-          <h1 className={styles.postTitle}>{post.data.title}</h1>
-          <div className={styles.postMetadata}>
-            <Label icon={<FiCalendar />}>{post.first_publication_date}</Label>
-            <Label icon={<FiUser />}>{post.data.author}</Label>
-            <Label icon={<FiClock />}>{post.reading_duration}</Label>
-          </div>
-        </div>
-        {post.data.content.map(section => (
-          <div key={section.heading}>
-            <h2 className={styles.postContentTitle}>{section.heading}</h2>
-            <div
-              className={styles.postContentBody}
-              dangerouslySetInnerHTML={{
-                __html: section.body.text,
-              }}
-            />
-          </div>
-        ))}
-      </article>
-    </main>
-  );
-}
-
-function getPostWordsAmount(content: any[]): number {
+function getPostWordsAmount(content: Post['data']['content']): number {
   const ALL_SPACES_REGEX = /\s+/g;
 
   return content.reduce((sum: number, section) => {
@@ -88,36 +62,73 @@ function getAproxReadingDuration(
     : `~ ${Math.ceil(aproxReadingDurationInMinutes)} min`;
 }
 
-export const getStaticPaths: GetStaticPaths = async () => {
-  // const prismic = getPrismicClient();
-  // const posts = await prismic.query(TODO);
+export default function Post({ post }: PostPageProps): JSX.Element {
+  const router = useRouter();
 
-  return { paths: [], fallback: 'blocking' };
+  const aproxReadingDuration = getAproxReadingDuration(
+    getPostWordsAmount(post.data.content)
+  );
+
+  return router.isFallback ? (
+    <p>Carregando...</p>
+  ) : (
+    <main>
+      <PostBanner alt={post.data.banner.alt} imageUrl={post.data.banner.url} />
+      <article className={`${commonStyles.container} ${styles.postWrapper}`}>
+        <div>
+          <h1 className={styles.postTitle}>{post.data.title}</h1>
+          <div className={styles.postMetadata}>
+            <Label icon={<FiCalendar />}>
+              {formatDate(new Date(post.first_publication_date))}
+            </Label>
+            <Label icon={<FiUser />}>{post.data.author}</Label>
+            <Label icon={<FiClock />}>{aproxReadingDuration}</Label>
+          </div>
+        </div>
+        {post.data.content.map(section => (
+          <div key={section.heading}>
+            <h2 className={styles.postContentTitle}>{section.heading}</h2>
+            <div
+              className={styles.postContentBody}
+              dangerouslySetInnerHTML={{
+                __html: RichText.asHtml(section.body),
+              }}
+            />
+          </div>
+        ))}
+      </article>
+    </main>
+  );
+}
+
+export const getStaticPaths: GetStaticPaths = async () => {
+  const prismic = getPrismicClient();
+  const postsResponse = await prismic.query(
+    [Prismic.predicates.at('document.type', 'post')],
+    { fetch: [''], pageSize: 8 }
+  );
+
+  const paths = postsResponse.results.map(({ uid }) => ({
+    params: { slug: uid },
+  }));
+
+  return { paths, fallback: true };
 };
 
 export const getStaticProps: GetStaticProps = async ({ params }) => {
   const prismic = getPrismicClient();
   const response = await prismic.getByUID('post', params.slug as string, {});
 
-  const postWordsAmount = getPostWordsAmount(response.data.content);
-  const aproxReadingDuration = getAproxReadingDuration(postWordsAmount);
-
   const post: Post = {
     data: {
       ...response.data,
       content: response.data.content.map(section => ({
         heading: section.heading,
-        body: { text: RichText.asHtml(section.body) },
+        body: section.body,
       })),
     },
-    first_publication_date: new Date(
-      response.first_publication_date
-    ).toLocaleDateString('pt-BR', {
-      day: '2-digit',
-      month: 'short',
-      year: 'numeric',
-    }),
-    reading_duration: aproxReadingDuration,
+    uid: response.uid,
+    first_publication_date: response.first_publication_date,
   };
 
   return { props: { post } };
