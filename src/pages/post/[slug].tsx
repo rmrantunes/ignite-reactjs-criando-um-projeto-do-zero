@@ -63,14 +63,16 @@ export default function Post({ post }: PostPageProps): JSX.Element {
 }
 
 function getPostWordsAmount(content: any[]): number {
+  const ALL_SPACES_REGEX = /\s+/g;
+
   return content.reduce((sum: number, section) => {
     const headingWordsAmount = section.heading
-      ? section.heading?.split(' ').length
+      ? section.heading?.split(ALL_SPACES_REGEX).length
       : 0;
 
-    const bodyWordsAmount = section.body.reduce((bodySum: number, { text }) => {
-      return (text ? text.split(' ').length : 0) + bodySum;
-    }, 0);
+    const bodyWordsAmount = RichText.asText(section.body).split(
+      ALL_SPACES_REGEX
+    ).length;
 
     return headingWordsAmount + bodyWordsAmount + sum;
   }, 0);
@@ -83,7 +85,7 @@ function getAproxReadingDuration(
   const aproxReadingDurationInMinutes = wordsAmount / wordsPerMinute;
   return aproxReadingDurationInMinutes < 1
     ? '< 1 min'
-    : `~ ${Math.round(aproxReadingDurationInMinutes)} min`;
+    : `~ ${Math.ceil(aproxReadingDurationInMinutes)} min`;
 }
 
 export const getStaticPaths: GetStaticPaths = async () => {
