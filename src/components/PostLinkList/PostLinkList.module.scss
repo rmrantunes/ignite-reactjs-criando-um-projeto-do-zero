@@ -1,0 +1,26 @@
+.postLinkList {
+  display: grid;
+  gap: 3rem;
+}
+
+.loadMorePostsButton {
+  font-size: 1.125rem;
+  font-weight: 600;
+  color: var(--highlight);
+  background: transparent;
+  border: none;
+  cursor: pointer;
+
+  justify-self: start;
+
+  transition: filter 0.2s;
+
+  &:hover {
+    filter: brightness(0.9);
+  }
+
+  &:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+  }
+}
