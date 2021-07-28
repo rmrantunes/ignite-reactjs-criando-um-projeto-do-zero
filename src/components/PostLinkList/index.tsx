@@ -1,4 +1,5 @@
 import { useCallback, useState } from 'react';
+import { formatDate } from '../../utils/format';
 
 import { loadMorePosts } from '../../utils/posts-pagination';
 import { PostLink } from '../PostLink';
@@ -49,7 +50,7 @@ export function PostLinkList({
           title={post.data.title}
           subtitle={post.data.subtitle}
           uid={post.uid}
-          publishedAt={post.first_publication_date}
+          publishedAt={formatDate(new Date(post.first_publication_date))}
         />
       ))}
       {postsPagination.next_page && (
