@@ -1,18 +1,17 @@
-import { useEffect, useRef } from 'react';
+import { useEffect } from 'react';
 
 export function UtterancesCommentsSection(): JSX.Element {
-  const scriptRef = useRef<HTMLScriptElement>(null);
-
   useEffect(() => {
-    scriptRef.current.setAttribute(
-      'repo',
-      'rmrantunes/spacetraveling-comments'
-    );
-    scriptRef.current.setAttribute('issue-term', 'pathname');
-    scriptRef.current.setAttribute('src', 'https://utteranc.es/client.js');
-    scriptRef.current.setAttribute('theme', 'github-dark');
-    scriptRef.current.setAttribute('crossorigin', 'anonymous');
+    const anchor = document.getElementById('utterances-comment-section');
+    const script = document.createElement('script');
+    script.setAttribute('repo', 'rmrantunes/spacetraveling-comments');
+    script.setAttribute('issue-term', 'pathname');
+    script.setAttribute('src', 'https://utteranc.es/client.js');
+    script.setAttribute('theme', 'github-dark');
+    script.setAttribute('crossorigin', 'anonymous');
+    script.setAttribute('async', 'true');
+    anchor.appendChild(script);
   }, []);
 
-  return <script ref={scriptRef} async />;
+  return <div id="utterances-comment-section" />;
 }
