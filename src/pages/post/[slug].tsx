@@ -11,7 +11,7 @@ import { getPrismicClient } from '../../services/prismic';
 
 import commonStyles from '../../styles/common.module.scss';
 import styles from './post.module.scss';
-import { formatDate } from '../../utils/format';
+import { formatDate, formatFullDate } from '../../utils/format';
 import { UtterancesCommentsSection } from '../../components/UtterancesCommentsSection';
 import { useUpdatePreviewRef } from '../../hooks/useUpdatePreviewRef';
 import {
@@ -22,6 +22,7 @@ import { NextPreviousPostsNav } from '../../components/NextPreviousPostsNav';
 
 interface Post {
   first_publication_date: string | null;
+  last_publication_date: string | null;
   uid?: string;
   id?: string;
   data: {
@@ -106,6 +107,12 @@ export default function Post({
             </Label>
             <Label icon={<FiUser />}>{post.data.author}</Label>
             <Label icon={<FiClock />}>{aproxReadingDuration}</Label>
+            <Label icon={<></>}>
+              <i>
+                *editado em{' '}
+                {formatFullDate(new Date(post.last_publication_date))}
+              </i>
+            </Label>
           </div>
         </div>
         {post.data.content.map(section => (
@@ -166,6 +173,7 @@ export const getStaticProps: GetStaticProps = async ({
     uid: response.uid,
     id: response.id,
     first_publication_date: response.first_publication_date,
+    last_publication_date: response.last_publication_date,
   };
 
   const nextPreviousPosts = await getNextPreviousPosts(prismic, post.id);
