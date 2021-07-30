@@ -1,0 +1,32 @@
+.divider {
+  opacity: 0.1;
+}
+
+.nextPreviousPostsNav {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+
+  margin: 2rem 0;
+}
+
+.nextPreviousPostsLink {
+  max-width: 50%;
+
+  span {
+    color: var(--heading);
+    line-height: 140%;
+  }
+
+  strong {
+    display: block;
+    color: var(--highlight);
+    margin-top: 0.5rem;
+    font-size: 0.875rem;
+  }
+}
+
+.nextPreviousPostsLink.next {
+  text-align: right;
+  margin-left: auto;
+}
