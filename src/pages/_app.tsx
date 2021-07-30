@@ -36,7 +36,10 @@ function MyApp({ Component, pageProps }: AppProps): JSX.Element {
       <Head>
         <link rel="stylesheet" href="/nprogress.css" />
       </Head>
-      <Header isCurrentPageIndex={isCurrentPageIndex} />
+      <Header
+        isCurrentPageIndex={isCurrentPageIndex}
+        isPreview={pageProps.isPreview}
+      />
       <Component {...pageProps} />
     </>
   );
