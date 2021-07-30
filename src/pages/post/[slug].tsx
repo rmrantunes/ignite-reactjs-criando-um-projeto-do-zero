@@ -3,14 +3,15 @@ import { RichText } from 'prismic-dom';
 import { FiCalendar, FiUser, FiClock } from 'react-icons/fi';
 import Prismic from '@prismicio/client';
 import { useRouter } from 'next/router';
+import Head from 'next/head';
 
 import { Label } from '../../components/Label';
 import { PostBanner } from '../../components/PostBanner';
+import { NextPreviousPostsNav } from '../../components/NextPreviousPostsNav';
 
 import { getPrismicClient } from '../../services/prismic';
 
 import commonStyles from '../../styles/common.module.scss';
-import styles from './post.module.scss';
 import { formatDate, formatFullDate } from '../../utils/format';
 import { UtterancesCommentsSection } from '../../components/UtterancesCommentsSection';
 import { useUpdatePreviewRef } from '../../hooks/useUpdatePreviewRef';
@@ -18,7 +19,8 @@ import {
   getNextPreviousPosts,
   NextPreviousPosts,
 } from '../../utils/posts-pagination';
-import { NextPreviousPostsNav } from '../../components/NextPreviousPostsNav';
+
+import styles from './post.module.scss';
 
 interface Post {
   first_publication_date: string | null;
@@ -96,43 +98,51 @@ export default function Post({
   return router.isFallback ? (
     <p>Carregando...</p>
   ) : (
-    <main>
-      <PostBanner alt={post.data.banner.alt} imageUrl={post.data.banner.url} />
-      <article className={`${commonStyles.container} ${styles.postWrapper}`}>
-        <div>
-          <h1 className={styles.postTitle}>{post.data.title}</h1>
-          <div className={styles.postMetadata}>
-            <Label icon={<FiCalendar />}>
-              {formatDate(new Date(post.first_publication_date))}
-            </Label>
-            <Label icon={<FiUser />}>{post.data.author}</Label>
-            <Label icon={<FiClock />}>{aproxReadingDuration}</Label>
-            <Label icon={<></>}>
-              <i>
-                *editado em{' '}
-                {formatFullDate(new Date(post.last_publication_date))}
-              </i>
-            </Label>
+    <>
+      <Head>
+        <title>{post.data.title} | spacetraveling</title>
+      </Head>
+      <main>
+        <PostBanner
+          alt={post.data.banner.alt}
+          imageUrl={post.data.banner.url}
+        />
+        <article className={`${commonStyles.container} ${styles.postWrapper}`}>
+          <div>
+            <h1 className={styles.postTitle}>{post.data.title}</h1>
+            <div className={styles.postMetadata}>
+              <Label icon={<FiCalendar />}>
+                {formatDate(new Date(post.first_publication_date))}
+              </Label>
+              <Label icon={<FiUser />}>{post.data.author}</Label>
+              <Label icon={<FiClock />}>{aproxReadingDuration}</Label>
+              <Label icon={<></>}>
+                <i>
+                  *editado em{' '}
+                  {formatFullDate(new Date(post.last_publication_date))}
+                </i>
+              </Label>
+            </div>
           </div>
-        </div>
-        {post.data.content.map(section => (
-          <div key={section.heading}>
-            <h2 className={styles.postContentTitle}>{section.heading}</h2>
-            <div
-              className={styles.postContentBody}
-              dangerouslySetInnerHTML={{
-                __html: RichText.asHtml(section.body),
-              }}
-            />
-          </div>
-        ))}
-      </article>
+          {post.data.content.map(section => (
+            <div key={section.heading}>
+              <h2 className={styles.postContentTitle}>{section.heading}</h2>
+              <div
+                className={styles.postContentBody}
+                dangerouslySetInnerHTML={{
+                  __html: RichText.asHtml(section.body),
+                }}
+              />
+            </div>
+          ))}
+        </article>
 
-      <div className={commonStyles.container}>
-        <NextPreviousPostsNav nextPreviousPosts={nextPreviousPosts} />
-        <UtterancesCommentsSection />
-      </div>
-    </main>
+        <div className={commonStyles.container}>
+          <NextPreviousPostsNav nextPreviousPosts={nextPreviousPosts} />
+          <UtterancesCommentsSection />
+        </div>
+      </main>
+    </>
   );
 }
 
