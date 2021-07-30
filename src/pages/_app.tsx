@@ -35,6 +35,7 @@ function MyApp({ Component, pageProps }: AppProps): JSX.Element {
     <>
       <Head>
         <link rel="stylesheet" href="/nprogress.css" />
+        <link rel="icon" href="/favicon.png" type="image/png" />
       </Head>
       <Header
         isCurrentPageIndex={isCurrentPageIndex}
