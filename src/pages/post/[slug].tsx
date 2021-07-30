@@ -13,10 +13,12 @@ import commonStyles from '../../styles/common.module.scss';
 import styles from './post.module.scss';
 import { formatDate } from '../../utils/format';
 import { UtterancesCommentsSection } from '../../components/UtterancesCommentsSection';
+import { useUpdatePreviewRef } from '../../hooks/useUpdatePreviewRef';
 
 interface Post {
   first_publication_date: string | null;
   uid?: string;
+  id?: string;
   data: {
     title: string;
     banner: {
@@ -35,6 +37,10 @@ interface Post {
 
 interface PostPageProps {
   post: Post;
+  isPreview: boolean;
+  preview: {
+    activeRef: string;
+  };
 }
 
 function getPostWordsAmount(content: Post['data']['content']): number {
@@ -63,8 +69,17 @@ function getAproxReadingDuration(
     : `${Math.ceil(aproxReadingDurationInMinutes)} min`;
 }
 
-export default function Post({ post }: PostPageProps): JSX.Element {
+export default function Post({
+  post,
+  isPreview,
+  preview,
+}: PostPageProps): JSX.Element {
   const router = useRouter();
+  useUpdatePreviewRef({
+    documentId: post.id,
+    isPreview,
+    preview,
+  });
 
   const aproxReadingDuration = getAproxReadingDuration(
     getPostWordsAmount(post.data.content)
@@ -118,9 +133,17 @@ export const getStaticPaths: GetStaticPaths = async () => {
   return { paths, fallback: true };
 };
 
-export const getStaticProps: GetStaticProps = async ({ params }) => {
+export const getStaticProps: GetStaticProps = async ({
+  params,
+  preview = false,
+  previewData,
+}) => {
+  const activeRef = previewData ? previewData.ref : null;
+
   const prismic = getPrismicClient();
-  const response = await prismic.getByUID('post', params.slug as string, {});
+  const response = await prismic.getByUID('post', params.slug as string, {
+    ref: activeRef,
+  });
 
   const post: Post = {
     data: {
@@ -131,8 +154,9 @@ export const getStaticProps: GetStaticProps = async ({ params }) => {
       })),
     },
     uid: response.uid,
+    id: response.id,
     first_publication_date: response.first_publication_date,
   };
 
-  return { props: { post } };
+  return { props: { post, preview: { activeRef }, isPreview: preview } };
 };
