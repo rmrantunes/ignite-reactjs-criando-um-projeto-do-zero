@@ -14,6 +14,11 @@ import styles from './post.module.scss';
 import { formatDate } from '../../utils/format';
 import { UtterancesCommentsSection } from '../../components/UtterancesCommentsSection';
 import { useUpdatePreviewRef } from '../../hooks/useUpdatePreviewRef';
+import {
+  getNextPreviousPosts,
+  NextPreviousPosts,
+} from '../../utils/posts-pagination';
+import { NextPreviousPostsNav } from '../../components/NextPreviousPostsNav';
 
 interface Post {
   first_publication_date: string | null;
@@ -41,6 +46,7 @@ interface PostPageProps {
   preview: {
     activeRef: string;
   };
+  nextPreviousPosts: NextPreviousPosts;
 }
 
 function getPostWordsAmount(content: Post['data']['content']): number {
@@ -73,6 +79,7 @@ export default function Post({
   post,
   isPreview,
   preview,
+  nextPreviousPosts,
 }: PostPageProps): JSX.Element {
   const router = useRouter();
   useUpdatePreviewRef({
@@ -114,7 +121,10 @@ export default function Post({
         ))}
       </article>
 
-      <UtterancesCommentsSection />
+      <div className={commonStyles.container}>
+        <NextPreviousPostsNav nextPreviousPosts={nextPreviousPosts} />
+        <UtterancesCommentsSection />
+      </div>
     </main>
   );
 }
@@ -158,5 +168,14 @@ export const getStaticProps: GetStaticProps = async ({
     first_publication_date: response.first_publication_date,
   };
 
-  return { props: { post, preview: { activeRef }, isPreview: preview } };
+  const nextPreviousPosts = await getNextPreviousPosts(prismic, post.id);
+
+  return {
+    props: {
+      post,
+      preview: { activeRef },
+      isPreview: preview,
+      nextPreviousPosts,
+    },
+  };
 };
