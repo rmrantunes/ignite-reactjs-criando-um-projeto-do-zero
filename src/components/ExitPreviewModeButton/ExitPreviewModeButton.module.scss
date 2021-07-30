@@ -1,0 +1,8 @@
+.exitPreviewModeLink {
+  color: var(--highlight);
+  font-weight: 600;
+
+  &:hover {
+    filter: brightness(0.9);
+  }
+}
