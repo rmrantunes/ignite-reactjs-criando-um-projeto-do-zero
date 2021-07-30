@@ -39,5 +39,6 @@ export const getStaticProps: GetStaticProps<HomePageProps> = async ({
       postsPagination: getPostsPagination(postsResponse),
       isPreview: preview,
     },
+    revalidate: 60 * 15, // 15 minutes
   };
 };

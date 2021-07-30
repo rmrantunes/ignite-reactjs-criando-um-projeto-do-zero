@@ -195,5 +195,6 @@ export const getStaticProps: GetStaticProps = async ({
       isPreview: preview,
       nextPreviousPosts,
     },
+    revalidate: 60 * 60, // 60 minutes
   };
 };
